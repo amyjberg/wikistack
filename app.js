@@ -25,7 +25,7 @@ app.get('/', async (req, res, next) => {
 });
 
 const init = async () => {
-  await models.db.sync({force: true});
+  await models.db.sync({force: false});
   // await models.User.sync();
 
   const PORT = 3000

@@ -6,9 +6,12 @@ const router = express.Router();
 
 
 
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
   //retrieve wiki pages
-  res.send('<h1>retrieved wiki pages</h1>');
+  const allPages = await Page.findAll();
+  console.log('all pages', allPages)
+
+  res.send(viewsIndex.main(allPages));
 });
 
 router.post('/', async (req, res, next) => {
@@ -23,7 +26,7 @@ router.post('/', async (req, res, next) => {
   try {
     await page.save();
     console.log('after save:', page);
-    res.redirect('/');
+    res.redirect(`/wiki/${page.slug}`);
   } catch (error) {
     next(error);
   }
@@ -34,7 +37,19 @@ router.get('/add', (req, res, next) => {
   res.send(viewsIndex.addPage());
 });
 
+router.get('/:slug', async (req, res, next) => {
+  try {
+    const page = await Page.findOne({
+      where: {slug: req.params.slug}
+    })
+    console.log(page);
+    res.send(viewsIndex.wikiPage(page));
+    // res.json(page);
+  } catch (error) {
+    next(error)
+  }
 
-
+  // res.send(`hit dynamic route at ${req.params.slug}`);
+});
 
 module.exports = router;
