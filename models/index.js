@@ -23,13 +23,9 @@ const Page = db.define('page', {
     allowNull: false
   },
   status: {
-    type: Sequelize.ENUM('open', 'closed')
+    type: Sequelize.ENUM('Open', 'Closed')
   }
 })
-
-Page.beforeValidate((pageInstance) => {
-  pageInstance.slug = generateSlug(pageInstance.title);
-});
 
 const User = db.define('user', {
   name: {
@@ -48,6 +44,12 @@ const User = db.define('user', {
     }
   }
 })
+
+Page.beforeValidate((pageInstance) => {
+  pageInstance.slug = generateSlug(pageInstance.title);
+});
+
+Page.belongsTo(User, {as: 'author'});
 
 module.exports = {
   db, Page, User, generateSlug
